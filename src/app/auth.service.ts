@@ -8,9 +8,9 @@ export class AuthService {
 
   constructor(private http: Http) { }
 
-  login(): Promise<void> {
+  login(credentials): Promise<void> {
     const url = 'http://localhost:3000/auth';
-    return this.http.get(url)
+    return this.http.post(url, credentials)
       .toPromise()
       .then(res => {
         const headers: Headers = res.headers;

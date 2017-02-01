@@ -1,6 +1,7 @@
 'use strict';
 
 const Hapi = require('hapi');
+const Boom = require('boom');
 const hapiAuthJWT = require('hapi-auth-jwt2');
 const JWT = require('jsonwebtoken');
 const aguid = require('aguid');
@@ -13,12 +14,20 @@ const store = {
     },
     products: [
         { name: 'Intel i7', price: 300, type: 'CPU', id: '1' }
-    ]
+    ],
+    sessions: {}
 };
 
 const validate = function (decoded, request, callback) {
-    // TODO: check if the session object (decoded) exists in the database
-    return callback(null, true);
+
+    // Check if the session is still valid
+    const session = store.sessions[decoded.id];
+    if (session && session.valid) {
+        return callback(null, true);
+    }
+    else {
+        return callback(null, false);
+    }
 };
 
 const server = new Hapi.Server();
@@ -54,16 +63,26 @@ server.register(hapiAuthJWT, function (err) {
         {
             method: [ 'GET', 'POST' ], path: '/auth', config: { auth: false },
             handler: function (request, reply) {
-                // TODO: Check login/password 
+                // Check username/password 
+                const credentials = request.payload;
+                const user = store.users[credentials.username];
 
+                if (!user || credentials.password !== user.password) {
+                    console.log('Bad user');
+                    return reply(Boom.badRequest('Bad credentials'));
+                }
+
+                // Create a new session object
                 const session = {
                     valid: true,
                     id: aguid(),
                     exp: Date.now() + 30 * 60 * 1000 // expired in 30 minutes
                 };
 
-                // TODO: Store session in the database so that it can be validated when a Token is received
+                // Save the session object in the store
+                store.sessions[session.id] = session;
 
+                // Generate the Json Web Token with the new session as payload
                 const token = JWT.sign(session, secretKey);
                 console.log(token);
 

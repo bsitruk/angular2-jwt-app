@@ -3,6 +3,11 @@ import { Router } from '@angular/router';
 
 import { AuthService } from '../auth.service';
 
+interface Credentials {
+  username: string;
+  password: string;
+}
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -15,8 +20,8 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
 
-  login(): void {
-    this.auth.login()
+  login(credentials: Credentials): void {
+    this.auth.login(credentials)
       .then(() => {
         this.router.navigate(['/products']);
       });

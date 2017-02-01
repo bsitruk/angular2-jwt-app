@@ -24,6 +24,7 @@
     "@angular/router": "^3.3.1",
     "aguid": "^2.0.0",
     "angular2-jwt": "^0.1.28",
+    "boom": "^4.2.0",
     "core-js": "^2.4.1",
     "hapi": "^16.1.0",
     "hapi-auth-jwt2": "^7.2.4",

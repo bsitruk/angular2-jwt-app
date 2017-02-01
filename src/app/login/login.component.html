@@ -1,4 +1,10 @@
 <p>
   login works!
 </p>
-<button (click)="login()">Login</button>
+<form #loginForm="ngForm" (ngSubmit)="login(loginForm.value)">
+  <input required type="text" placeholder="username" 
+    ngModel name="username" /> <br />
+  <input required type="password" placeholder="password" 
+    ngModel name="password" />
+  <button type="submit">Login</button>
+</form>
