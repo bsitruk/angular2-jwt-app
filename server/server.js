@@ -22,7 +22,10 @@ const validate = function (decoded, request, callback) {
 };
 
 const server = new Hapi.Server();
-server.connection({ port: 3000 });
+server.connection({ 
+    port: 3000,
+    routes: { cors: { additionalExposedHeaders: ['Authorization'] } }
+});
 
 server.register(hapiAuthJWT, function (err) {
 
